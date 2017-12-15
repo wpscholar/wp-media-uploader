@@ -2,6 +2,10 @@
 
 namespace wpscholar\WordPress;
 
+if ( ! function_exists( 'wp_handle_upload' ) && defined( 'ABSPATH' ) ) {
+	require ABSPATH . '/wp-admin/includes/file.php';
+}
+
 /**
  * Class MediaUploader
  *
