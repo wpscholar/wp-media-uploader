@@ -2,7 +2,7 @@
 
 namespace wpscholar\WordPress;
 
-if ( ! function_exists( 'wp_handle_upload' ) && defined( 'ABSPATH' ) ) {
+if ( defined( 'ABSPATH' ) && ! function_exists( 'wp_handle_upload' ) ) {
 	require ABSPATH . '/wp-admin/includes/file.php';
 }
 
@@ -75,11 +75,11 @@ class MediaUploader {
 				throw new \RuntimeException( $error->get_error_message() );
 			}
 
-			if ( wp_attachment_is_image( $attachment_id ) ) {
+			if ( ! function_exists( 'wp_generate_attachment_metadata' ) ) {
 				require_once ABSPATH . 'wp-admin/includes/image.php';
-				$attachment_meta = wp_generate_attachment_metadata( $attachment_id, $file['file'] );
-				wp_update_attachment_metadata( $attachment_id, $attachment_meta );
 			}
+			$attachment_meta = wp_generate_attachment_metadata( $attachment_id, $file['file'] );
+			wp_update_attachment_metadata( $attachment_id, $attachment_meta );
 
 			return $attachment_id;
 
