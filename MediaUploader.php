@@ -2,7 +2,7 @@
 
 namespace wpscholar\WordPress;
 
-if ( defined( 'ABSPATH' ) && ! function_exists( 'wp_handle_upload' ) ) {
+if ( \defined( 'ABSPATH' ) && ! \function_exists( 'wp_handle_upload' ) ) {
 	require ABSPATH . '/wp-admin/includes/file.php';
 }
 
@@ -14,19 +14,24 @@ if ( defined( 'ABSPATH' ) && ! function_exists( 'wp_handle_upload' ) ) {
 class MediaUploader {
 
 	/**
-	 * File handle
+	 * File data
 	 *
-	 * @var string
+	 * @var array
 	 */
-	protected $_handle;
+	protected $_file;
 
 	/**
-	 * WordPressMediaUploader constructor.
+	 * MediaUploader constructor.
 	 *
-	 * @param string $handle
+	 * @param array $file An array containing file data (a single element of $_FILES, call once for each file uploaded)
 	 */
-	public function __construct( $handle ) {
-		$this->_handle = $handle;
+	public function __construct( array $file ) {
+
+		if ( ! isset( $file['error'], $file['name'], $file['tmp_name'], $file['size'], $file['type'] ) ) {
+			trigger_error( 'Invalid file data', E_USER_ERROR );
+		}
+
+		$this->_file = $file;
 	}
 
 	/**
@@ -40,17 +45,13 @@ class MediaUploader {
 
 		try {
 
-			if ( ! isset( $_FILES, $_FILES[ $this->_handle ] ) ) {
-				throw new \RuntimeException( 'No file exists' );
-			}
-
-			$file = wp_handle_upload( $_FILES[ $this->_handle ], [ 'test_form' => false ] );
+			$file = wp_handle_upload( $this->_file, [ 'test_form' => false ] );
 
 			if ( isset( $file['error'] ) ) {
 				throw new \RuntimeException( $file['error'] );
 			}
 
-			$file_name = basename( $_FILES[ $this->_handle ]['name'] );
+			$file_name = basename( $this->_file['name'] );
 
 			$wp_upload_dir = wp_upload_dir();
 
@@ -75,7 +76,7 @@ class MediaUploader {
 				throw new \RuntimeException( $error->get_error_message() );
 			}
 
-			if ( ! function_exists( 'wp_generate_attachment_metadata' ) ) {
+			if ( ! \function_exists( 'wp_generate_attachment_metadata' ) ) {
 				require_once ABSPATH . 'wp-admin/includes/image.php';
 			}
 			$attachment_meta = wp_generate_attachment_metadata( $attachment_id, $file['file'] );
