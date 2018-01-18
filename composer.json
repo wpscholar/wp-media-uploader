@@ -1,7 +1,7 @@
 {
     "name": "wpscholar/wp-media-uploader",
     "description": "Make it easy to properly import a file from a file upload field into the WordPress media library.",
-    "license": "GPL-2.0+",
+    "license": "GPL-2.0-or-later",
     "authors": [
         {
             "name": "Micah Wood",
