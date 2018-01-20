@@ -51,14 +51,12 @@ class MediaUploader {
 				throw new \RuntimeException( $file['error'] );
 			}
 
-			$file_name = basename( $this->_file['name'] );
-
-			$wp_upload_dir = wp_upload_dir();
+			$file_name = basename( $file['file'] );
 
 			$wp_filetype = wp_check_filetype( $file_name );
 
 			$attachment = [
-				'guid'           => $wp_upload_dir['url'] . '/' . $file_name,
+				'guid'           => $file['url'],
 				'post_content'   => '',
 				'post_mime_type' => $wp_filetype['type'],
 				'post_parent'    => $parent_post_id,
